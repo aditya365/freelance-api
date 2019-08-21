@@ -1,11 +1,15 @@
 import express from "express";
 import * as bodyParser from "body-parser";
 import { deflate } from "zlib";
-import { SkillRoutes } from "./routes/skill.routes"
 import mongoose from "mongoose";
-import { passport } from 'passport';
-import { UserRoutes } from "./routes/user.routes";
+import "reflect-metadata";
+import "typedi";
 
+// import * as passport from "passport.jwt";
+import { UserRoutes } from "./routes/user.routes";
+import { SkillRoutes } from "./routes/skill.routes"
+require('./passport.jwt');
+require('./passport.local');
 
 class App {
     public app: express.Application;
@@ -26,6 +30,7 @@ class App {
     //middleware
     //configures app
     private config(): void {
+
         //to parse application/json post data
         this.app.use(bodyParser.json())
 

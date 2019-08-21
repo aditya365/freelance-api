@@ -6,7 +6,9 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true    
     },
     "include": [
         "src/**/*.ts"
@@ -16,5 +18,5 @@
     ],
     "lib": [
         "es2015"
-    ]
+    ],
 }

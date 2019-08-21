@@ -1,47 +1,37 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
-import { JWT } from "jsonwebtoken";
-import { JWT_SECRET } from "../configuration"
+import * as JWT from "jsonwebtoken";
+import { JWT_SECRET } from "../config"
+import { UserService } from "../services/user.service";
+import { Service } from "typedi";
 
+@Service()
 export class UserController {
-    constructor(){
-        
-    }
+    constructor(private userService: UserService) { }
+
     public async signUp(req: Request, res: Response) {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
-        if (user) {
-            return res.status(403).json({ error: "Email address already exists" });
-        }
-        const newUser = new User({ email, password });
-        newUser.save((err, user) => {
-            if (err) {
-                return res.send(err)
-            }
-            console.log(this);
-            this.sample1();
+        const user: IUser = req.body;
+        const newUser = await this.userService.create(user);
+        if (newUser == null) {
+            return res.status(403).json({ message: "email already exists" });
+        } else {
             const token = this.signToken(newUser);
             res.json({ token });
-        })
+        }
     }
 
-    public signToken = (user: IUser) => {
+    public async signIn(req:Request, res:Response){
+        const user: IUser = req.body;
+        const token = this.signToken(user);
+        res.json({token});
+    }
+
+    private signToken = (user: IUser) => {
         return JWT.sign({
             iss: 'Freelancer',
             sub: user.id,
             iat: new Date().getTime(),
             exp: new Date().setDate(new Date().getDate() + 1) // current date tiem + 1 day,
         }, JWT_SECRET);
-    }
-
-    public sample(req, res) {
-        console.log(this);
-        this.sample1();
-        res.send("hi");
-
-    }
-
-    public sample1() {
-        console.log("hello");
     }
 }
